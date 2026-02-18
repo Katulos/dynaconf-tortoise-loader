@@ -1,0 +1,26 @@
+[project]
+name = "dynaconf-tortoise-loader"
+description = ""
+keywords = []
+dynamic = [ "version" ]
+authors = [
+    { name = "Katulos", email = "katulos@protonmail.com" }
+]
+maintainers = [
+    { name = "Katulos", email = "katulos@protonmail.com"}
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = []
+
+
+[tool.setuptools.dynamic]
+version = {attr = "dynaconf_tortoise_loader.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
