@@ -1,0 +1,64 @@
+{
+  "name": "dynaconf-tortoise-loader",
+  "dockerComposeFile": "docker-compose.yaml",
+  "service": "devcontaner",
+  "remoteUser": "vscode",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          }
+        },
+        "python.terminal.activateEnvInCurrentTerminal": true,
+        "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+        "git.enabled": true,
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.inheritEnv": true,
+        "editor.bracketPairColorization.enabled": true,
+        "editor.guides.bracketPairs": "active"
+      },
+      "extensions": [
+        "adam-bender.commit-message-editor",
+        "adpyke.vscode-sql-formatter",
+        "charliermarsh.ruff",
+        "christian-kohler.path-intellisense",
+        "codeium.codeium",
+        "dotjoshjohnson.xml",
+        "editorconfig.editorconfig",
+        "formulahendry.auto-close-tag",
+        "formulahendry.auto-rename-tag",
+        "hbenl.vscode-test-explorer",
+        "janisdd.vscode-edit-csv",
+        "littlefoxteam.vscode-python-test-adapter",
+        "mechatroner.rainbow-csv",
+        "mohsen1.prettify-json",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "oderwat.indent-rainbow",
+        "redhat.vscode-yaml",
+        "streetsidesoftware.code-spell-checker",
+        "tal7aouy.rainbow-bracket",
+        "yzhang.markdown-all-in-one",
+        "cweijan.vscode-database-client2"
+      ]
+    }
+  },
+  "postCreateCommand": {
+    "setupEnvironment": "uv python install 3.10 && uv venv --python 3.10 && sudo chown -R $(whoami): ${containerWorkspaceFolder}/.venv"
+  },
+  "remoteEnv": {
+    "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
+    "SSH_AUTH_SOCK": "/ssh-agent",
+    "WORKSPACE": "${containerWorkspaceFolder}",
+    "UV_VENV_CLEAR": "1",
+    "UV_LINK_MODE": "copy"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/va-h/devcontainers-features/uv:1": {}
+  },
+  "mounts": ["source=${SSH_AUTH_SOCK},target=/ssh-agent,type=bind"]
+}
