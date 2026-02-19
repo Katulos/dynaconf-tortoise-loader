@@ -10,13 +10,32 @@ maintainers = [
     { name = "Katulos", email = "katulos@protonmail.com"}
 ]
 readme = "README.md"
-license = { text = "MIT" }
-requires-python = ">=3.10"
+license-files = ["LICEN[CS]E*"]
+requires-python = ">=3.10,<3.14"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Utilities",
+]
 dependencies = [
     "dynaconf>=3.2.12",
     "tortoise-orm>=1.1.4",
 ]
 
+[project.urls]
+Documentation = "https://github.com/katulos/dynaconf-tortoise-loader/tree/master#readme"
+Home = "https://github.com/katulos/dynaconf-tortoise-loader"
+Source = "https://github.com/katulos/dynaconf-tortoise-loader"
+Tracker = "https://github.com/katulos/dynaconf-tortoise-loader/issues"
 
 [tool.setuptools.dynamic]
 version = {attr = "dynaconf_tortoise_loader.__version__"}

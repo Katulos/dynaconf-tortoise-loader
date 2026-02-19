@@ -1,6 +1,6 @@
 version = 1
 revision = 3
-requires-python = ">=3.10"
+requires-python = ">=3.10, <3.14"
 
 [[package]]
 name = "aiosqlite"
@@ -103,7 +103,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiosqlite" },
     { name = "anyio" },
-    { name = "iso8601", marker = "python_full_version < '4'" },
+    { name = "iso8601" },
     { name = "pypika-tortoise" },
     { name = "tomlkit", marker = "python_full_version < '3.11'" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
