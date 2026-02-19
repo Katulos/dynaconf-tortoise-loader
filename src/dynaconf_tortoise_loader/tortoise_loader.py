@@ -2,11 +2,19 @@ from typing import Any
 
 from dynaconf import Dynaconf
 from dynaconf.loaders.base import SourceMetadata
-from dynaconf.utils import upperfy
+from dynaconf.utils import build_env_list, upperfy
 from dynaconf.utils.parse_conf import parse_conf_data, unparse_conf_data
-from tortoise import Tortoise, run_async
 
 from dynaconf_tortoise_loader.models import DynaconfStorage
+
+try:
+    from tortoise import Tortoise, run_async
+except ImportError as _tie:
+    raise ImportError(
+        "Tortoise-ORM package is not installed in your environment. "
+        "`pip install tortoise-orm` or disable the tortoise loader with "
+        "export TORTOISE_ENABLED_FOR_DYNACONF=false",
+    ) from _tie
 
 IDENTIFIER = "tortoise"
 
@@ -26,7 +34,7 @@ async def _init_tortoise(obj: Dynaconf) -> None:
         },
     }
     await Tortoise.init(config)
-    await Tortoise.generate_schemas()
+    await Tortoise.generate_schemas(safe=True)
 
 
 async def _load_data(holder: str, key: str | None = None) -> dict[str, Any]:
@@ -39,7 +47,7 @@ async def _load_data(holder: str, key: str | None = None) -> dict[str, Any]:
             return {key: record.value}
         return {}
     else:
-        records = await DynaconfStorage.filter(holder=holder.upper()).all()
+        records = await DynaconfStorage.filter(holder=holder).all()
         return {record.key: record.value for record in records}
 
 
@@ -68,37 +76,57 @@ def load(
     silent: bool = True,
     key: str | None = None,
     validate: bool = False,
-) -> bool:
-    prefix = obj.get("ENVVAR_PREFIX_FOR_DYNACONF", "DYNACONF")
+) -> None:
+    prefix = obj.get("ENVVAR_PREFIX_FOR_DYNACONF")
     env_name = env or obj.current_env
-    holder = f"{prefix.upper()}_{env_name.upper()}"
+    env_list = build_env_list(obj, env_name)
+
+    if prefix and prefix not in env_list:
+        env_list.insert(0, prefix)
 
     async def _inner() -> None:
         await _init_tortoise(obj)
         try:
-            raw_data = await _load_data(holder, key=key)
-            if not raw_data:
-                return
+            all_data = {}
 
-            parsed_data = {
-                k: parse_conf_data(v, tomlfy=True, box_settings=obj)
-                for k, v in raw_data.items()
-            }
+            for search_env in env_list:
+                if prefix:
+                    if search_env == prefix:
+                        holder = f"{prefix.upper()}"
+                    else:
+                        holder = f"{prefix.upper()}_{search_env.upper()}"
+                else:
+                    holder = search_env.upper()
 
-            source_metadata = SourceMetadata(IDENTIFIER, "unique", env_name)
+                raw_data = await _load_data(holder, key=key)
+                if raw_data:
+                    parsed_data = {
+                        k: parse_conf_data(v, tomlfy=True, box_settings=obj)
+                        for k, v in raw_data.items()
+                    }
+                    all_data.update(parsed_data)
 
-            if key:
-                if key in parsed_data:
-                    obj.set(
-                        key,
-                        parsed_data[key],
-                        validate=validate,
-                        loader_identifier=source_metadata,
-                    )
-            else:
-                if parsed_data:
+                    if key and key in parsed_data:
+                        break
+
+            if all_data:
+                source_metadata = SourceMetadata(
+                    IDENTIFIER,
+                    "unique",
+                    env_name.lower(),
+                )
+
+                if key:
+                    if key in all_data:
+                        obj.set(
+                            key,
+                            all_data[key],
+                            validate=validate,
+                            loader_identifier=source_metadata,
+                        )
+                else:
                     obj.update(
-                        parsed_data,
+                        all_data,
                         loader_identifier=source_metadata,
                         validate=validate,
                     )
@@ -107,28 +135,32 @@ def load(
 
     try:
         run_async(_inner())
-        return True
+        return
     except Exception as e:
         if not silent:
             raise e
-        return False
+        return
 
 
 def write(
     obj: Dynaconf,
     data: dict[str, Any] | None = None,
     **kwargs: Any,
-) -> bool:
+) -> None:
     if obj.TORTOISE_ENABLED_FOR_DYNACONF is False:
-        raise RuntimeError("Tortoise loader is disabled")
+        raise RuntimeError(
+            "Tortoise-ORM is not configured \n"
+            "export TORTOISE_ENABLED_FOR_DYNACONF=true\n"
+            "and configure the TORTOISE_*_FOR_DYNACONF variables",
+        )
+
+    holder = obj.get("ENVVAR_PREFIX_FOR_DYNACONF").upper()
+    holder = f"{holder}_{obj.current_env.upper()}"
 
     data = data or {}
     data.update(kwargs)
     if not data:
         raise AttributeError("Data must be provided")
-
-    prefix = obj.get("ENVVAR_PREFIX_FOR_DYNACONF", "DYNACONF")
-    holder = f"{prefix.upper()}_{obj.current_env.upper()}"
 
     tortoise_data = {}
     for key, value in data.items():
@@ -146,17 +178,17 @@ def write(
     try:
         run_async(_inner())
         load(obj)
-        return True
+        return
     except Exception as e:
         raise e
 
 
-def delete(obj: Dynaconf, key: str | None = None) -> bool:
+def delete(obj: Dynaconf, key: str | None = None) -> None:
     if obj.TORTOISE_ENABLED_FOR_DYNACONF is False:
         raise RuntimeError("Tortoise loader is disabled")
 
-    prefix = obj.get("ENVVAR_PREFIX_FOR_DYNACONF", "DYNACONF")
-    holder = f"{prefix.upper()}_{obj.current_env.upper()}"
+    holder = obj.get("ENVVAR_PREFIX_FOR_DYNACONF").upper()
+    holder = f"{holder}_{obj.current_env.upper()}"
 
     async def _inner() -> None:
         await _init_tortoise(obj)
@@ -169,6 +201,6 @@ def delete(obj: Dynaconf, key: str | None = None) -> bool:
         run_async(_inner())
         if key:
             obj.unset(key)
-        return True
+        return
     except Exception as e:
         raise e

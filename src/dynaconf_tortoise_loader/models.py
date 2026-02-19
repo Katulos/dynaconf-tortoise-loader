@@ -9,8 +9,8 @@ _logger = logging.getLogger("dynaconf")
 
 class DynaconfStorage(Model):
     id = fields.BigIntField(primary_key=True)
-    holder = fields.CharField(max_length=255, index=True)
-    key = fields.CharField(max_length=255, index=True)
+    holder = fields.CharField(max_length=255, db_index=True)
+    key = fields.CharField(max_length=255, db_index=True)
     value = fields.TextField(null=True)
 
     class Meta:
