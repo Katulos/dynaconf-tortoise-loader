@@ -8,12 +8,14 @@ _logger = logging.getLogger("dynaconf")
 
 
 class DynaconfStorage(Model):
-    id = fields.BigIntField(pk=True)
-    key = fields.CharField(max_length=255)
-    value = fields.TextField()
+    id = fields.BigIntField(primary_key=True)
+    holder = fields.CharField(max_length=255, index=True)
+    key = fields.CharField(max_length=255, index=True)
+    value = fields.TextField(null=True)
 
     class Meta:
         table = "dynaconf_storage"
+        unique_together = (("holder", "key"),)
 
 
 @post_save(DynaconfStorage)
@@ -25,7 +27,7 @@ async def dynaconf_storage_post_save(
     update_fields: list[str],
 ) -> None:
     # pylint: disable=unused-argument
-    _logger.info(
+    _logger.debug(
         "Config parameter saved: %s: %s",
         instance.key,
         instance.value,
