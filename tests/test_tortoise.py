@@ -1,7 +1,7 @@
 import pytest
 from dynaconf.utils.inspect import get_history
 
-from dynaconf_tortoise_loader.tortoise_loader import delete, load, write
+from dynaconf_tortoise_loader.loader import delete, load, write
 
 
 def test_write_tortoise_without_data(settings):
