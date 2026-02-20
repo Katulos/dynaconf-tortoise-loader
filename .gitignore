@@ -218,3 +218,4 @@ __marimo__/
 # Current project
 .devcontainer/.env
 old_code/
+*.sqlite3

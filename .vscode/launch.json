@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Run Current File",
+      "type": "python",
+      "request": "launch",
+      "stopOnEntry": false,
+      "stopOnPoints": true,
+      "python": "${command:python.interpreterPath}",
+      "program": "${file}",
+      "console": "internalConsole"
+    },
+    {
+      "name": "Python: Debug Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "stopOnEntry": false,
+      "stopOnPoints": true,
+      "python": "${command:python.interpreterPath}",
+      "program": "${file}",
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "debugOptions": ["RedirectOutput"]
+    }
+  ]
+}
