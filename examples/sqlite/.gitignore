@@ -1,5 +1,3 @@
 
 # Ignore dynaconf secret files
 .secrets.*
-data/
-!data/.gitkeep

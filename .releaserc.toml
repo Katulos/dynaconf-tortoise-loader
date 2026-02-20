@@ -1,16 +1,17 @@
 [semantic_release]
 version_variables = [
-    "dynaconf_tortoise_loader/__init__.py:__version__"
+    "src/dynaconf_tortoise_loader/__init__.py:__version__"
 ]
 assets = []
+build_command = "wget -qO- https://astral.sh/uv/install.sh | sh && ~/.local/bin/uv build"
 build_command_env = []
-commit_message = "chore(release): v{version} [skip ci]"
+commit_message = "chore(release): {version} [skip ci]"
 commit_parser = "conventional"
 logging_use_named_masks = false
 major_on_zero = true
 allow_zero_version = true
 no_git_verify = false
-tag_format = "v{version}"
+tag_format = "{version}"
 upload_to_repository  = true
 upload_to_release = true
 
