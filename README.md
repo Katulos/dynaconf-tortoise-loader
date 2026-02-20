@@ -8,14 +8,20 @@
 ![release](https://github.com/Katulos/dynaconf-tortoise-loader/actions/workflows/release.yml/badge.svg)
 ![develop](https://github.com/Katulos/dynaconf-tortoise-loader/actions/workflows/develop.yml/badge.svg?branch=develop)
 
+Implementing Dynaconf settings storage in a database using the Tortoise ORM framework.
+
 
 ## Installation
+
 `pip install dynaconf-tortoise-loader`
+
 By default, Tortoise ORM comes with a sqlite database driver.
+
 If you require a different database driver, please refer to the [Tortoise ORM documentation](https://tortoise.github.io/getting_started.html#installation).
 
 ## Usage
-1. Create a config.py file in your project
+
+1. Create a `config.py` file in your project
 
     ```python
     import logging
@@ -77,8 +83,11 @@ If you require a different database driver, please refer to the [Tortoise ORM do
     except ValidationError as e:
         logging.error(e.message)
     ```
+
     The `TORTOISE_URL_FOR_DYNACONF`value must contain the database connection string. See the [Tortoise ORM documentation](https://tortoise.github.io/databases.html#db-url) for more details.
+
     `TORTOISE_URL_FOR_DYNACONF` does not need to be declared directly in the code, but can be declared in the settings files listed in `settings_files` or set via an environment variable.
+
     For more information, please refer to the [Dynaconf documentation](https://www.dynaconf.com/configuration/).
 
 2. Use the `settings` object in your code
