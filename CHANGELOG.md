@@ -1,5 +1,19 @@
 # CHANGELOG
 
+
+## v0.1.1 (2026-02-21)
+
+### Bug Fixes
+
+- Downgrade tortoise-orm>=0.25.4
+  ([`a00e838`](https://github.com/Katulos/dynaconf-tortoise-loader/commit/a00e838e86bc28b8e4e5f5feeb366064fd17a7a7))
+
+### Documentation
+
+- Fix README and LICENSE
+  ([`aea57f8`](https://github.com/Katulos/dynaconf-tortoise-loader/commit/aea57f823ef97768d284006acd8fe26d5849b6c7))
+
+
 ## v0.1.0 (2026-02-20)
 
 ### Documentation
