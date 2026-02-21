@@ -45,7 +45,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "dynaconf", specifier = ">=3.2.12" },
-    { name = "tortoise-orm", specifier = ">=1.1.4" },
+    { name = "tortoise-orm", specifier = ">=0.25.4" },
 ]
 
 [[package]]
